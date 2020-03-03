@@ -28,7 +28,7 @@ object BluetoothSerial {
         when (action) {
             CONNECT -> {
                 enableBluetoothIfNecessary()
-                connect(args, callbackContext)
+                connect(args, callbackContext as ResultInterface)
             }
             DISCONNECT -> {
                 try {
@@ -122,16 +122,20 @@ object BluetoothSerial {
     }
 
     @Throws(JSONException::class)
-    private fun connect(args: Any?, callbackContext: Any?) {
+    fun connect(args: Any?, resultInterface: ResultInterface) {
 //        val macAddress: String = args.getString(0)
-//        val device = bluetoothAdapter?.getRemoteDevice(macAddress)
-//        if (device != null) {
-//            BluetoothSerialService.connect(device)
-//            val result = PluginResult(PluginResult.Status.NO_RESULT)
-            //callbackContext.sendPluginResult(result)
-//        } else {
-            //callbackContext.error("Could not connect to $macAddress")
-//        }
+        val macAddress: String = "18:21:95:5A:A3:80"
+        val device = bluetoothAdapter?.getRemoteDevice(macAddress)
+        if (device != null) {
+            BluetoothSerialService.connect(device)
+            resultInterface.sendResult("Connected to bluetooth")
+        } else {
+            resultInterface.sendResult("Unable to connect to bluetooth")
+        }
+    }
+
+    fun write(byteArray: ByteArray) {
+        BluetoothSerialService.write(byteArray)
     }
 
     private fun notifyConnectionLost() {
@@ -184,5 +188,9 @@ object BluetoothSerial {
 
         // Debugging
         private const val TAG = "BluetoothSerial"
+
+    interface ResultInterface {
+        fun sendResult(result: String)
+    }
 
 }

@@ -24,10 +24,12 @@ class PostMessageHandler(webView: WebView) {
             }
         }
 
-        var destPort = arrayOf(nativeToJsPorts[1])
+        val destPort = arrayOf(nativeToJsPorts[1])
         nativeToJsPorts[0].setWebMessageCallback(nativeToJs!!)
         WebViewCompat.postWebMessage(webView, WebMessageCompat("capturePort", destPort), Uri.EMPTY)
 
     }
+
+
 
 }
