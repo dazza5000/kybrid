@@ -9,26 +9,23 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebViewCompat
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var rootView: View
-    private lateinit var webViewCallbacks: WebView
-    private lateinit var btnSendMessage: Button
-    private lateinit var txtSendMessage: EditText
     private lateinit var webViewConfig: WebViewConfig
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        webViewCallbacks = rootView.findViewById(R.id.webViewCallbacks)
-        btnSendMessage = rootView.findViewById(R.id.btnSendMessage)
-        txtSendMessage = rootView.findViewById(R.id.txtSendMessage)
-        webViewConfig = WebViewConfig(webViewCallbacks)
-        btnSendMessage.setOnClickListener {
-            WebViewCompat.postWebMessage(webViewCallbacks, WebMessageCompat(txtSendMessage.text.toString()), Uri.EMPTY)
-        }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        webViewConfig = WebViewConfig(webView)
+        btnSendMessage.setOnClickListener {
+            WebViewCompat.postWebMessage(webView, WebMessageCompat(txtSendMessage.text.toString()), Uri.EMPTY)
+        }
     }
 }

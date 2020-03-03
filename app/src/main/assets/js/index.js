@@ -16,11 +16,11 @@ window.addEventListener('message', function(event) {
 }, false);
 
 nativeJsPortOne.addEventListener('message', function(event) {
-    alert(event.data);
+    alert(event.data + " port one");
 }, false);
 
 nativeJsPortTwo.addEventListener('message', function(event) {
-    alert(event.data);
+    alert(event.data + " port two");
 }, false);
 nativeJsPortOne.start();
 nativeJsPortTwo.start();
