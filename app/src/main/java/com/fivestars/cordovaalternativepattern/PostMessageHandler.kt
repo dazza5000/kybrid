@@ -9,9 +9,8 @@ import androidx.webkit.WebMessagePortCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerial
-import com.fivestars.cordovaalternativepattern.model.JavascriptMessage
+import model.JavascriptMessage
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 
@@ -33,7 +32,7 @@ class PostMessageHandler(webView: WebView) {
                     Toast.makeText(webView.context, message!!.data, Toast.LENGTH_SHORT).show()
 
                     val jsonAdapter =
-                        moshi.adapter(JavascriptMessage::class.java)
+                        moshi.adapter(model.JavascriptMessage::class.java)
                     val javascriptMessage = jsonAdapter.fromJson(message.data!!)
 
                     if ("connect" == javascriptMessage?.action) {
