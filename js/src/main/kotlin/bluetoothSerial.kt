@@ -5,13 +5,13 @@ import model.JavascriptMessage
 
 object BluetoothSerial {
     fun connect(macAddress: String, success: () -> Unit, failure: () -> Unit) {
-        val message = JavascriptMessage(action = Action.CONNECT.toString(), data = mapOf(
+        val message = JavascriptMessage(action = Action.CONNECT, data = mapOf(
             KEY_MAC_ADDRESS to macAddress))
         outputPort.postMessage(message)
     }
 
     fun disconnect() {
-        outputPort.postMessage(JavascriptMessage(Action.DISCONNECT.toString(), null))
+        outputPort.postMessage(JavascriptMessage(Action.DISCONNECT, null))
     }
 
     fun send(data: ByteArray, success: () -> Unit, failure: () -> Unit) { }
