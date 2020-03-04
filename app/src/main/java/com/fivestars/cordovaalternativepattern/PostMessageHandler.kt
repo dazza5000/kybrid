@@ -1,5 +1,6 @@
 package com.fivestars.cordovaalternativepattern
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.webkit.WebView
 import android.widget.Toast
@@ -17,12 +18,21 @@ class PostMessageHandler(webView: WebView) {
     init {
 
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_CALLBACK_ON_MESSAGE)) {
-            // This receives messages from javascript
             nativeToJs = object : WebMessagePortCompat.WebMessageCallbackCompat() {
                 override fun onMessage(port: WebMessagePortCompat, message: WebMessageCompat?) {
                     super.onMessage(port, message)
                     Toast.makeText(webView.context, message!!.data, Toast.LENGTH_SHORT).show()
-                    message?.data?.run {
+
+                    if (message.data == "connect") {
+                        BluetoothSerial.connect(null, object: BluetoothSerial.ResultInterface {
+                            @SuppressLint("RequiresFeature")
+                            override fun sendResult(result: String) {
+                                WebViewCompat.postWebMessage(webView, WebMessageCompat("Connected to bluetooth"), Uri.EMPTY)
+                            }
+                        })
+                    }
+
+                    message.data?.run {
                         BluetoothSerial.write(this.toByteArray())
                     }
                 }

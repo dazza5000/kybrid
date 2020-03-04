@@ -29,7 +29,7 @@ nativeJsPortTwo.start();
 var app = {
     connect: function() {
 //    app.registerCallbacks();
-    nativeJsPortTwo.postMessage("yo yo yo")
+    nativeJsPortTwo.postMessage("connect")
 //        bluetoothSerial.connect(
 //            "18:21:95:5A:A3:80", // device to connect to
 //            function() {
