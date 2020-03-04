@@ -1,3 +1,4 @@
 rootProject.name='Cordova Alternative Pattern'
 include ':app'
 include ':SharedCode'
+include ':js'

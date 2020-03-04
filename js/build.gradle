@@ -1,0 +1,11 @@
+apply plugin: 'org.jetbrains.kotlin.js'
+
+dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib-js:1.3.70"
+}
+
+kotlin {
+    target {
+        browser()
+    }
+}
