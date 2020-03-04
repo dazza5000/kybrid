@@ -5,8 +5,8 @@ import org.w3c.dom.MessageEvent
 import kotlin.browser.window
 
 val channel = MessageChannel()
-var jsPortOne = channel.port1
-var jsPortTwo = channel.port2
+var incomingPort = channel.port1
+var outputPort = channel.port2
 
 fun configureChannel() {
 
@@ -14,14 +14,14 @@ fun configureChannel() {
     window.addEventListener("message", {
     }, false)
 
-    jsPortOne.addEventListener("message", {
+    incomingPort.addEventListener("message", {
         window.alert((it as MessageEvent).data.toString())
     }, false)
 
-    jsPortTwo.addEventListener("message", {
+    outputPort.addEventListener("message", {
         window.alert((it as MessageEvent).data.toString())
     }, false)
 
-    jsPortOne.start()
-    jsPortTwo.start()
+    incomingPort.start()
+    outputPort.start()
 }

@@ -1,4 +1,6 @@
 package model
 
-data class JavascriptMessage(val action: String, val data: Map<String, Any>) {
+import com.fivestars.cordovaalternativepattern.model.Action
+
+data class JavascriptMessage(val action: Action, val data: Map<String, Any>?) {
 }
