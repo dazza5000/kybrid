@@ -29,18 +29,17 @@ nativeJsPortTwo.start();
 var app = {
     connect: function() {
 //    app.registerCallbacks();
-    nativeJsPortTwo.postMessage("connect")
-//        bluetoothSerial.connect(
-//            "18:21:95:5A:A3:80", // device to connect to
-//            function() {
-//                console.log("Success");
-//                app.clear();
-//                app.display("Connection in progress");
-//            }, // start listening if you succeed
-//            function() {
-//                console.log("Not success");
-//            } // show the error if you fail
-//        );
+        bluetoothSerial.connect(
+            "18:21:95:5A:A3:80", // device to connect to
+            function() {
+                console.log("Success");
+                app.clear();
+                app.display("Connection in progress");
+            }, // start listening if you succeed
+            function() {
+                console.log("Not success");
+            } // show the error if you fail
+        );
     },
         registerCallbacks: function() {
                                         bluetoothSerial.registerOnDataCallback(function(data) {

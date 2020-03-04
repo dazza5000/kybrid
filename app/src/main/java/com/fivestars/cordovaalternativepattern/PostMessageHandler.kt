@@ -9,6 +9,11 @@ import androidx.webkit.WebMessagePortCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerial
+import com.fivestars.cordovaalternativepattern.model.JavascriptMessage
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+
 
 class PostMessageHandler(webView: WebView) {
 
@@ -17,14 +22,22 @@ class PostMessageHandler(webView: WebView) {
 
     init {
 
+        val moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_CALLBACK_ON_MESSAGE)) {
             nativeToJs = object : WebMessagePortCompat.WebMessageCallbackCompat() {
                 override fun onMessage(port: WebMessagePortCompat, message: WebMessageCompat?) {
                     super.onMessage(port, message)
                     Toast.makeText(webView.context, message!!.data, Toast.LENGTH_SHORT).show()
 
-                    if (message.data == "connect") {
-                        BluetoothSerial.connect(null, object: BluetoothSerial.ResultInterface {
+                    val jsonAdapter =
+                        moshi.adapter(JavascriptMessage::class.java)
+                    val javascriptMessage = jsonAdapter.fromJson(message.data!!)
+
+                    if ("connect" == javascriptMessage?.action) {
+                        BluetoothSerial.connect(javascriptMessage.data["macAddress"] as String, object: BluetoothSerial.ResultInterface {
                             @SuppressLint("RequiresFeature")
                             override fun sendResult(result: String) {
                                 WebViewCompat.postWebMessage(webView, WebMessageCompat("Connected to bluetooth"), Uri.EMPTY)

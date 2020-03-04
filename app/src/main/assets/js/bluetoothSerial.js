@@ -1,7 +1,15 @@
 bluetoothSerial = {
 
     connect: function (macAddress, success, failure) {
-        cordova.exec(success, failure, "BluetoothSerial", "connect", [macAddress]);
+    var success = success;
+    var failure = failure;
+
+    var data = { macAddress };
+
+    var obj = { action: "connect", data };
+
+    nativeJsPortTwo.postMessage(JSON.stringify(obj));
+
     },
 
     disconnect: function (success, failure) {
