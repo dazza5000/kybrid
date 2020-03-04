@@ -7,6 +7,7 @@ import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebMessagePortCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
+import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerial
 
 class PostMessageHandler(webView: WebView) {
 
@@ -16,10 +17,14 @@ class PostMessageHandler(webView: WebView) {
     init {
 
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_CALLBACK_ON_MESSAGE)) {
+            // This receives messages from javascript
             nativeToJs = object : WebMessagePortCompat.WebMessageCallbackCompat() {
                 override fun onMessage(port: WebMessagePortCompat, message: WebMessageCompat?) {
                     super.onMessage(port, message)
                     Toast.makeText(webView.context, message!!.data, Toast.LENGTH_SHORT).show()
+                    message?.data?.run {
+                        BluetoothSerial.write(this.toByteArray())
+                    }
                 }
             }
         }
@@ -29,7 +34,4 @@ class PostMessageHandler(webView: WebView) {
         WebViewCompat.postWebMessage(webView, WebMessageCompat("capturePort", destPort), Uri.EMPTY)
 
     }
-
-
-
 }

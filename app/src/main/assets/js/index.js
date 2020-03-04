@@ -19,8 +19,45 @@ nativeJsPortOne.addEventListener('message', function(event) {
     alert(event.data + " port one");
 }, false);
 
+// This is the port that incoming message arrive on
 nativeJsPortTwo.addEventListener('message', function(event) {
     alert(event.data + " port two");
 }, false);
 nativeJsPortOne.start();
 nativeJsPortTwo.start();
+
+var app = {
+    connect: function() {
+//    app.registerCallbacks();
+    nativeJsPortTwo.postMessage("yo yo yo")
+//        bluetoothSerial.connect(
+//            "18:21:95:5A:A3:80", // device to connect to
+//            function() {
+//                console.log("Success");
+//                app.clear();
+//                app.display("Connection in progress");
+//            }, // start listening if you succeed
+//            function() {
+//                console.log("Not success");
+//            } // show the error if you fail
+//        );
+    },
+        registerCallbacks: function() {
+                                        bluetoothSerial.registerOnDataCallback(function(data) {
+                                            app.display(data);
+                                        });
+
+                                                bluetoothSerial.registerOnConnectCallback(function() {
+                                                    console.log("Connected");
+                                                    app.clear();
+                                                    app.display("Connected to device");
+                                                });
+
+                                                bluetoothSerial.registerOnCloseCallback(function() {
+                                                    console.log("Disconnected");
+                                                    app.clear();
+                                                    app.display("Disconnected from device");
+                                                });
+                                        },
+
+}
