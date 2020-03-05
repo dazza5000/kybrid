@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         webViewConfig = WebViewConfig(webView)
         btnSendMessage.setOnClickListener {
-            BluetoothSerial.write("asdf".toByteArray())
+            BluetoothSerial.write("asdf".toByteArray(), null, null, webView)
         }
     }
 }

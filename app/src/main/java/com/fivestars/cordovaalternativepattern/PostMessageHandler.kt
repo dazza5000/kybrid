@@ -1,13 +1,11 @@
 package com.fivestars.cordovaalternativepattern
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebMessagePortCompat
 import androidx.webkit.WebViewCompat
-import androidx.webkit.WebViewFeature
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerial
 import com.fivestars.cordovaalternativepattern.model.Action
 import com.squareup.moshi.Moshi
@@ -21,10 +19,11 @@ class PostMessageHandler(webView: WebView) {
 
     init {
 
+
+        // TODO: Use kotlinx serialization
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
-
 
         javascriptToNativeCallback = object : WebMessagePortCompat.WebMessageCallbackCompat() {
             override fun onMessage(port: WebMessagePortCompat, message: WebMessageCompat?) {
@@ -36,16 +35,9 @@ class PostMessageHandler(webView: WebView) {
                 val javascriptMessage = jsonAdapter.fromJson(message.data!!)
 
                 if (Action.CONNECT == javascriptMessage?.action) {
-                    BluetoothSerial.connect(javascriptMessage.data!![KEY_MAC_ADDRESS] as String, object: BluetoothSerial.ResultInterface {
-                        @SuppressLint("RequiresFeature")
-                        override fun sendResult(result: String) {
-                            WebViewCompat.postWebMessage(webView, WebMessageCompat("Connected to bluetooth"), Uri.EMPTY)
-                        }
-                    })
-                }
-
-                message.data?.run {
-                    BluetoothSerial.write(this.toByteArray())
+                    BluetoothSerial.connect(javascriptMessage.data!![KEY_MAC_ADDRESS] as String, javascriptMessage.successCallbackId, javascriptMessage.failureCallbackId, webView)
+                } else if (Action.SEND == javascriptMessage?.action) {
+                    BluetoothSerial.write(javascriptMessage.data!![KEY_SEND_DATA]?.toByteArray()!!, javascriptMessage.successCallbackId, javascriptMessage.failureCallbackId, webView)
                 }
             }
 
@@ -53,7 +45,7 @@ class PostMessageHandler(webView: WebView) {
 
         val destPort = arrayOf(webMessagePorts[1])
         webMessagePorts[0].setWebMessageCallback(javascriptToNativeCallback!!)
-        WebViewCompat.postWebMessage(webView, WebMessageCompat("capturePort", destPort), Uri.EMPTY)
+        WebViewCompat.postWebMessage(webView, WebMessageCompat(KEY_CAPTURE_PORT, destPort), Uri.EMPTY)
 
     }
 }

@@ -1,16 +1,24 @@
 package com.fivestars.cordovaalternativepattern.bluetooth
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.net.MacAddress
+import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.webkit.WebView
+import androidx.webkit.WebMessageCompat
+import androidx.webkit.WebViewCompat
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerialService.ClosedCallback
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerialService.ConnectedCallback
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerialService.DataCallback
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerialService.STATE_CONNECTED
+import com.fivestars.cordovaalternativepattern.model.CallbackId
+import com.fivestars.cordovaalternativepattern.model.NativeDataMessage
 import org.json.JSONException
 import java.lang.Exception
 import java.lang.reflect.Field
+import kotlinx.serialization.json.*
+
 
 
 /**
@@ -27,22 +35,9 @@ object BluetoothSerial {
         Log.d(TAG, "action = $action")
         var validAction = true
         when (action) {
-            CONNECT -> {
-                enableBluetoothIfNecessary()
-                connect(args, callbackContext as ResultInterface)
-            }
             DISCONNECT -> {
                 try {
                     BluetoothSerialService.stop()
-                    //callbackContext.success()
-                } catch (e: Exception) {
-                    //callbackContext.error(e.toString())
-                }
-            }
-            SEND -> {
-                try {
-                    //val data: ByteArray = args.getArrayBuffer(0)
-//                    BluetoothSerialService.write(data)
                     //callbackContext.success()
                 } catch (e: Exception) {
                     //callbackContext.error(e.toString())
@@ -122,19 +117,49 @@ object BluetoothSerial {
         BluetoothSerialService.stop()
     }
 
+    @SuppressLint("RequiresFeature")
     @Throws(JSONException::class)
-    fun connect(macAddress: String, resultInterface: ResultInterface) {
-        val device = bluetoothAdapter?.getRemoteDevice(macAddress)
+    fun connect(macAddress: String, successCallbackId: CallbackId?, failureCallbackId: CallbackId?, webViewCompat: WebView) {
+        enableBluetoothIfNecessary()
+        val device = bluetoothAdapter.getRemoteDevice(macAddress)
         if (device != null) {
+
             BluetoothSerialService.connect(device)
-            resultInterface.sendResult("Connected to bluetooth")
+
+            successCallbackId?.run {
+                val nativeDataMessage = NativeDataMessage(this, null)
+                val json = Json(JsonConfiguration.Stable)
+                val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
+                WebViewCompat.postWebMessage(webViewCompat, WebMessageCompat(jsonData), Uri.EMPTY)
+            }
         } else {
-            resultInterface.sendResult("Unable to connect to bluetooth")
+            failureCallbackId?.run {
+                val nativeDataMessage = NativeDataMessage(this, null)
+                val json = Json(JsonConfiguration.Stable)
+                val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
+                WebViewCompat.postWebMessage(webViewCompat, WebMessageCompat(jsonData), Uri.EMPTY)
+            }
         }
     }
 
-    fun write(byteArray: ByteArray) {
-        BluetoothSerialService.write(byteArray)
+    fun write(byteArray: ByteArray, successCallbackId: CallbackId?, failureCallbackId: CallbackId?, webViewCompat: WebView) {
+
+        try {
+            BluetoothSerialService.write(byteArray)
+            successCallbackId?.run {
+                val nativeDataMessage = NativeDataMessage(this, null)
+                val json = Json(JsonConfiguration.Stable)
+                val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
+                WebViewCompat.postWebMessage(webViewCompat, WebMessageCompat(jsonData), Uri.EMPTY)
+            }
+        } catch (e: Exception) {
+            failureCallbackId?.run {
+                val nativeDataMessage = NativeDataMessage(this, e.toString().toByteArray())
+                val json = Json(JsonConfiguration.Stable)
+                val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
+                WebViewCompat.postWebMessage(webViewCompat, WebMessageCompat(jsonData), Uri.EMPTY)
+            }
+        }
     }
 
     private fun notifyConnectionLost() {
