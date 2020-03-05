@@ -11,6 +11,7 @@ import kotlin.browser.window
 object BluetoothSerial {
     private val callbacks = mutableMapOf<CallbackId, () -> Unit>()
     private val json = Json(JsonConfiguration.Stable)
+    private var onDataCallback: ((ByteArray) -> Unit)? = null
 
     @JsName("connect")
     fun connect(macAddress: String, success: () -> Unit, failure: () -> Unit) {
@@ -46,7 +47,7 @@ object BluetoothSerial {
 
     @ExperimentalStdlibApi
     @JsName("send")
-    fun send(data: ByteArray, success: () -> Unit, failure: () -> Unit) {
+    fun send(data: String, success: () -> Unit, failure: () -> Unit) {
 
         callbacks[CallbackId.SEND_SUCCESS] = success
         callbacks[CallbackId.SEND_FAILURE] = failure
@@ -66,7 +67,7 @@ object BluetoothSerial {
         }, false)
 
         val message = JavascriptMessage(Action.SEND, CallbackId.SEND_SUCCESS, CallbackId.SEND_FAILURE, mapOf(
-            KEY_SEND_DATA to data.decodeToString()))
+            KEY_SEND_DATA to data))
 
         val jsonData = json.stringify(JavascriptMessage.serializer(), message)
 
@@ -77,15 +78,33 @@ object BluetoothSerial {
 
     fun getAddress(success: () -> Unit, failure: () -> Unit) {}
 
+    @JsName("registerOnDataCallback")
     fun registerOnDataCallback(success: (byteArray: ByteArray) -> Unit) {
+        console.log("Registering the onDataCallback")
 
+        onDataCallback = success;
+
+        window.addEventListener("message", {
+
+            it as MessageEvent
+            val dataMessage = json.parse(NativeDataMessage.serializer(), it.data.toString())
+
+            console.log("dataMessage is: $dataMessage")
+
+            dataMessage.data?.run {
+                onDataCallback?.invoke(this)
+            }
+
+        }, false)
     }
 
-    fun registerOnConnectCallback(success: () -> Unit) {
-
+    @JsName("registerOnConnectCallback")
+    fun registerOnConnectCallback(onConnectCallback: () -> Unit) {
+        callbacks[CallbackId.ON_CONNECT_CALLBACK] = onConnectCallback
     }
 
-    fun registerOnCloseCallback(success: () -> Unit) {
-
+    @JsName("registerOnCloseCallback")
+    fun registerOnCloseCallback(onCloseCallback: () -> Unit) {
+        callbacks[CallbackId.ON_CLOSE_CALLBACK] = onCloseCallback
     }
 }

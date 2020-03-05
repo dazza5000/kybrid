@@ -8,39 +8,39 @@ import androidx.webkit.WebMessagePortCompat
 import androidx.webkit.WebViewCompat
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerial
 import com.fivestars.cordovaalternativepattern.model.Action
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.fivestars.cordovaalternativepattern.model.CallbackId
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import model.JavascriptMessage
 
 
 class PostMessageHandler(webView: WebView) {
 
     private val webMessagePorts = WebViewCompat.createWebMessageChannel(webView)
     private var javascriptToNativeCallback: WebMessagePortCompat.WebMessageCallbackCompat? = null
+    private val json = Json(JsonConfiguration.Stable)
 
     init {
-
-
-        // TODO: Use kotlinx serialization
-        val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
 
         javascriptToNativeCallback = object : WebMessagePortCompat.WebMessageCallbackCompat() {
             override fun onMessage(port: WebMessagePortCompat, message: WebMessageCompat?) {
                 super.onMessage(port, message)
                 Toast.makeText(webView.context, message!!.data, Toast.LENGTH_SHORT).show()
 
-                val jsonAdapter =
-                    moshi.adapter(model.JavascriptMessage::class.java)
-                val javascriptMessage = jsonAdapter.fromJson(message.data!!)
+                val javascriptMessage = json.parse(JavascriptMessage.serializer(), message.data!!)
 
-                if (Action.CONNECT == javascriptMessage?.action) {
-                    BluetoothSerial.connect(javascriptMessage.data!![KEY_MAC_ADDRESS] as String, javascriptMessage.successCallbackId, javascriptMessage.failureCallbackId, webView)
-                } else if (Action.SEND == javascriptMessage?.action) {
-                    BluetoothSerial.write(javascriptMessage.data!![KEY_SEND_DATA]?.toByteArray()!!, javascriptMessage.successCallbackId, javascriptMessage.failureCallbackId, webView)
+                when (javascriptMessage?.action) {
+                    Action.CONNECT -> BluetoothSerial.connect(javascriptMessage.data!![KEY_MAC_ADDRESS] as String, javascriptMessage.successCallbackId, javascriptMessage.failureCallbackId, webView)
+                    Action.DISCONNECT -> {}
+                    Action.SEND -> BluetoothSerial.write(javascriptMessage.data!![KEY_SEND_DATA] as String, javascriptMessage.successCallbackId, javascriptMessage.failureCallbackId, webView)
+                    Action.LISTEN -> {}
+                    Action.GET_ADDRESS -> {}
+                    Action.REGISTER_DATA_CALLBACK -> { BluetoothSerial.registerOnDataCallback(CallbackId.ON_DATA_CALLBACK, webView)}
+                    Action.REGISTER_CONNECT_CALLBACK -> {}
+                    Action.REGISTER_CLOSE_CALLBACK -> {}
+                    null ->  {}
                 }
             }
-
         }
 
         val destPort = arrayOf(webMessagePorts[1])

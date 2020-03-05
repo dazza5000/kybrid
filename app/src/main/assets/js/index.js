@@ -2,7 +2,6 @@ BluetoothSerialJs.configureChannel();
 
 var app = {
     connect: function() {
-        //app.registerCallbacks();
         BluetoothSerialJs.BluetoothSerial.connect(
             "18:21:95:5A:A3:80", // device to connect to
             function() {
@@ -16,28 +15,22 @@ var app = {
 
         registerCallbacks: function() {
                 BluetoothSerialJs.BluetoothSerial.registerOnDataCallback(function(data) {
-                    app.display(data);
+                    console.log("This is the incoming data:" +data);
                 });
 
                 BluetoothSerialJs.BluetoothSerial.registerOnConnectCallback(function() {
                     console.log("Connected");
-                    app.clear();
-                    app.display("Connected to device");
                 });
 
                 BluetoothSerialJs.BluetoothSerial.registerOnCloseCallback(function() {
                     console.log("Disconnected");
-                    app.clear();
-                    app.display("Disconnected from device");
                 });
             },
 
                 send: function() {
-                    BluetoothSerialJs.BluetoothSerial.send(new Uint8Array("moops").buffer,
+                    BluetoothSerialJs.BluetoothSerial.send("moops",
                         function() {
                             console.log("Success");
-                            app.clear();
-                            app.display("sent message");
                         }, // start listening if you succeed
                         function() {
                             console.log("Not success");
@@ -46,11 +39,3 @@ var app = {
                 },
 
     }
-
-    var stringToArrayBuffer = function(str) {
-        var ret = new Uint8Array(str.length);
-        for (var i = 0; i < str.length; i++) {
-            ret[i] = str.charCodeAt(i);
-        }
-        return ret.buffer;
-    };
