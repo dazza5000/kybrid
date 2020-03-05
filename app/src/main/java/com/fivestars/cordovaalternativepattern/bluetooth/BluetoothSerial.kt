@@ -21,62 +21,19 @@ import kotlinx.serialization.json.*
 import kotlin.text.Charsets.UTF_8
 
 
-/**
- * PhoneGap Plugin for Serial Communication over Bluetooth
- */
 object BluetoothSerial {
-    private var connectCallback: Any? = null
-    private var closeCallback: Any? = null
+
+    private const val TAG = "BluetoothSerial"
+
     private var dataAvailableCallbackId: CallbackId? = null
+    private var connectCallbackId: CallbackId? = null
+    private var disconnectCallbackId: CallbackId? = null
+    public var messageHandler: MessageHandler? = null
     private val bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    val json = Json(JsonConfiguration.Stable)
 
-    @Throws(JSONException::class)
-    fun execute(action: String, args: String, callbackContext: Any?): Boolean {
-        Log.d(TAG, "action = $action")
-        var validAction = true
-        when (action) {
-            DISCONNECT -> {
-                try {
-                    BluetoothSerialService.stop()
-                    //callbackContext.success()
-                } catch (e: Exception) {
-                    //callbackContext.error(e.toString())
-                }
-            }
-            LISTEN -> {
-                listen(callbackContext)
-            }
-            GET_ADDRESS -> {
-                val macAddress = getBluetoothMacAddress()
 
-//                macAddress?.run {
-//                    //callbackContext.success(this)
-//                } ?: callbackContext.error("Unable to determine Bluetooth MAC address")
-            }
-            REGISTER_CONNECT_CALLBACK -> {
-                connectCallback = callbackContext
-                BluetoothSerialService.registerConnectedCallback(object : ConnectedCallback {
-                    override fun connected() {
-                        notifyConnectionSuccess()
-                    }
-                })
-            }
-            REGISTER_CLOSE_CALLBACK -> {
-                closeCallback = callbackContext
-                BluetoothSerialService.registerClosedCallback(object : ClosedCallback {
-                    override fun closed() {
-                        notifyConnectionLost()
-                    }
-                })
-            }
-            else -> {
-                validAction = false
-            }
-        }
-        return validAction
-    }
-
-    private fun listen(callbackContext: Any?) {
+    fun listen(callbackContext: Any?) {
         if (BluetoothSerialService.state == STATE_CONNECTED) {
             //callbackContext.error("Already connected")
         } else {
@@ -87,12 +44,6 @@ object BluetoothSerial {
             } catch (e: Exception) {
                 //callbackContext.error(e.toString())
             }
-        }
-    }
-
-    private fun enableBluetoothIfNecessary() {
-        if (!bluetoothAdapter.isEnabled) {
-            bluetoothAdapter.enable()
         }
     }
 
@@ -111,7 +62,6 @@ object BluetoothSerial {
 
             successCallbackId?.run {
                 val nativeDataMessage = NativeDataMessage(this, null)
-                val json = Json(JsonConfiguration.Stable)
                 val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
                 WebViewCompat.postWebMessage(webViewCompat, WebMessageCompat(jsonData), Uri.EMPTY)
             }
@@ -145,35 +95,70 @@ object BluetoothSerial {
         }
     }
 
+    fun registerConnectCallback(callbackId: CallbackId, webView: WebView) {
+        this.connectCallbackId = callbackId
+        BluetoothSerialService.registerConnectedCallback(object : ConnectedCallback {
+            override fun connected() {
+                notifyConnectionSuccess()
+            }
+        })
+    }
+
+    fun registerDisconnectCallback(callbackId: CallbackId, webView: WebView) {
+        this.disconnectCallbackId = callbackId
+        BluetoothSerialService.registerClosedCallback(object : ClosedCallback {
+            override fun closed() {
+                notifyConnectionLost()
+            }
+        })
+    }
+
     fun registerOnDataCallback(callbackId: CallbackId, webView: WebView) {
-        Log.e(TAG, "Registered OnDataCallback")
         this.dataAvailableCallbackId = callbackId
         BluetoothSerialService.registerDataCallback(object : DataCallback {
             override fun onData(data: ByteArray) {
                 val data1 = data.toString(UTF_8)
-                Log.e(TAG, "data was ${data1}")
                 if (data1.isNotEmpty()) {
                     dataAvailableCallbackId?.run {
-                        val nativeDataMessage = NativeDataMessage(this@BluetoothSerial, data1)
+                        val nativeDataMessage = NativeDataMessage(this, data1)
                         val json = Json(JsonConfiguration.Stable)
                         val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
-                        webView.post {
-                            WebViewCompat.postWebMessage(webView, WebMessageCompat(jsonData), Uri.EMPTY)
-                        }
+                        messageHandler.sendMessage(jsonData)
                     }
                 }
             }
         })
     }
 
-    private fun notifyConnectionLost() {
-//        closeCallback?.success()
+    fun disconnect() {
+        try {
+            BluetoothSerialService.stop()
+            //callbackContext.success()
+        } catch (e: Exception) {
+            //callbackContext.error(e.toString())
+        }
+    }
+
+    fun getAddress() {
+        val macAddress = getBluetoothMacAddress()
+
+        macAddress?.run {
+            //callbackContext.success(this)
+        } ?: callbackContext.error("Unable to determine Bluetooth MAC address")
     }
 
     private fun notifyConnectionSuccess() {
-//        val result = PluginResult(PluginResult.Status.OK)
-//        result.keepCallback = true
-//        connectCallback?.sendPluginResult(result)
+        connectCallbackId?.run {
+            val nativeDataMessage = NativeDataMessage(this, null)
+            messageHandler?.sendMessage(json.stringify(NativeDataMessage.serializer(), nativeDataMessage))
+        }
+    }
+
+    private fun notifyConnectionLost() {
+        disconnectCallbackId?.run {
+            val nativeDataMessage = NativeDataMessage(this, null)
+            messageHandler?.sendMessage(json.stringify(NativeDataMessage.serializer(), nativeDataMessage))
+        }
     }
 
     private fun getBluetoothMacAddress(): String? {
@@ -196,13 +181,13 @@ object BluetoothSerial {
         return bluetoothMacAddress
     }
 
+    private fun enableBluetoothIfNecessary() {
+        if (!bluetoothAdapter.isEnabled) {
+            bluetoothAdapter.enable()
+        }
+    }
 
-        private const val LISTEN = "listen"
-        private const val DISCONNECT = "disconnect"
-        private const val GET_ADDRESS = "getAddress"
-        private const val REGISTER_CONNECT_CALLBACK = "registerConnectCallback"
-        private const val REGISTER_CLOSE_CALLBACK = "registerCloseCallback"
-
-        // Debugging
-        private const val TAG = "BluetoothSerial"
+    interface MessageHandler {
+        fun sendMessage(message: String)
+    }
 }

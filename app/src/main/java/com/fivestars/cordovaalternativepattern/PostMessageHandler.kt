@@ -7,6 +7,7 @@ import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebMessagePortCompat
 import androidx.webkit.WebViewCompat
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerial
+import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerial.MessageHandler
 import com.fivestars.cordovaalternativepattern.model.Action
 import com.fivestars.cordovaalternativepattern.model.CallbackId
 import kotlinx.serialization.json.Json
@@ -21,6 +22,12 @@ class PostMessageHandler(webView: WebView) {
     private val json = Json(JsonConfiguration.Stable)
 
     init {
+
+        BluetoothSerial.messageHandler = object : MessageHandler {
+            override fun sendMessage(message: String) {
+                WebViewCompat.postWebMessage(webView, WebMessageCompat(message), Uri.EMPTY)
+            }
+        }
 
         javascriptToNativeCallback = object : WebMessagePortCompat.WebMessageCallbackCompat() {
             override fun onMessage(port: WebMessagePortCompat, message: WebMessageCompat?) {
