@@ -11,7 +11,7 @@ import kotlin.browser.window
 object BluetoothSerial {
     private val callbacks = mutableMapOf<CallbackId, () -> Unit>()
     private val json = Json(JsonConfiguration.Stable)
-    private var onDataCallback: ((ByteArray) -> Unit)? = null
+    private var onDataCallback: ((String) -> Unit)? = null
 
     @JsName("connect")
     fun connect(macAddress: String, success: () -> Unit, failure: () -> Unit) {
@@ -79,7 +79,7 @@ object BluetoothSerial {
     fun getAddress(success: () -> Unit, failure: () -> Unit) {}
 
     @JsName("registerOnDataCallback")
-    fun registerOnDataCallback(success: (byteArray: ByteArray) -> Unit) {
+    fun registerOnDataCallback(success: (data: String) -> Unit) {
         console.log("Registering the onDataCallback")
 
         onDataCallback = success;
@@ -89,13 +89,20 @@ object BluetoothSerial {
             it as MessageEvent
             val dataMessage = json.parse(NativeDataMessage.serializer(), it.data.toString())
 
-            console.log("dataMessage is: $dataMessage")
-
+            dataMessage.data?.run {
+                console.log("data message is: ${dataMessage.data}")
+            }
             dataMessage.data?.run {
                 onDataCallback?.invoke(this)
             }
 
         }, false)
+
+        val message = JavascriptMessage(Action.REGISTER_DATA_CALLBACK, null, null, null)
+
+        val jsonData = json.stringify(JavascriptMessage.serializer(), message)
+
+        outputPort.postMessage(jsonData)
     }
 
     @JsName("registerOnConnectCallback")

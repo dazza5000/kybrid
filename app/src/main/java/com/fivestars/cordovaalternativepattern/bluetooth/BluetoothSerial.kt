@@ -18,7 +18,7 @@ import org.json.JSONException
 import java.lang.Exception
 import java.lang.reflect.Field
 import kotlinx.serialization.json.*
-
+import kotlin.text.Charsets.UTF_8
 
 
 /**
@@ -137,7 +137,7 @@ object BluetoothSerial {
             }
         } catch (e: Exception) {
             failureCallbackId?.run {
-                val nativeDataMessage = NativeDataMessage(this, e.toString().toByteArray())
+                val nativeDataMessage = NativeDataMessage(this, e.toString())
                 val json = Json(JsonConfiguration.Stable)
                 val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
                 WebViewCompat.postWebMessage(webViewCompat, WebMessageCompat(jsonData), Uri.EMPTY)
@@ -146,10 +146,22 @@ object BluetoothSerial {
     }
 
     fun registerOnDataCallback(callbackId: CallbackId, webView: WebView) {
+        Log.e(TAG, "Registered OnDataCallback")
         this.dataAvailableCallbackId = callbackId
         BluetoothSerialService.registerDataCallback(object : DataCallback {
             override fun onData(data: ByteArray) {
-                sendRawDataToSubscriber(data, webView)
+                val data1 = data.toString(UTF_8)
+                Log.e(TAG, "data was ${data1}")
+                if (data1.isNotEmpty()) {
+                    dataAvailableCallbackId?.run {
+                        val nativeDataMessage = NativeDataMessage(this@BluetoothSerial, data1)
+                        val json = Json(JsonConfiguration.Stable)
+                        val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
+                        webView.post {
+                            WebViewCompat.postWebMessage(webView, WebMessageCompat(jsonData), Uri.EMPTY)
+                        }
+                    }
+                }
             }
         })
     }
@@ -162,18 +174,6 @@ object BluetoothSerial {
 //        val result = PluginResult(PluginResult.Status.OK)
 //        result.keepCallback = true
 //        connectCallback?.sendPluginResult(result)
-    }
-
-    @SuppressLint("RequiresFeature")
-    private fun sendRawDataToSubscriber(data: ByteArray?, webView: WebView) {
-        if (data != null && data.isNotEmpty()) {
-            dataAvailableCallbackId?.run {
-                val nativeDataMessage = NativeDataMessage(this, data)
-                val json = Json(JsonConfiguration.Stable)
-                val jsonData = json.stringify(NativeDataMessage.serializer(), nativeDataMessage)
-                WebViewCompat.postWebMessage(webView, WebMessageCompat(jsonData), Uri.EMPTY)
-            }
-        }
     }
 
     private fun getBluetoothMacAddress(): String? {
