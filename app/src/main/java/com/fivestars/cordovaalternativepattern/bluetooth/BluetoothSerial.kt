@@ -1,6 +1,7 @@
 package com.fivestars.cordovaalternativepattern.bluetooth
 
 import android.bluetooth.BluetoothAdapter
+import android.net.MacAddress
 import android.os.Build
 import android.util.Log
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerialService.ClosedCallback
@@ -122,9 +123,7 @@ object BluetoothSerial {
     }
 
     @Throws(JSONException::class)
-    fun connect(args: Any?, resultInterface: ResultInterface) {
-//        val macAddress: String = args.getString(0)
-        val macAddress: String = "18:21:95:5A:A3:80"
+    fun connect(macAddress: String, resultInterface: ResultInterface) {
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
         if (device != null) {
             BluetoothSerialService.connect(device)

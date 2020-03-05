@@ -4,6 +4,9 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebView Callback Demo</title>
+    <script src="js/kotlin.js"></script>
+    <script src="js/SharedCode.js"></script>
+    <script src="js/BluetoothSerialJs.js"></script>
     <script src="js/index.js"></script>
 </head>
 
@@ -11,6 +14,8 @@
     <div style="font-size: 24pt; text-align: center;">
         <input type="button" value="Test" onclick="nativeJsPortTwo.postMessage(msgFromJS.value);" style="font-size: inherit;" /><br />
         <input id="msgFromJS" type="text" value="JavaScript To Native" style="font-size: 16pt; text-align: inherit; width: 80%;" />
+        <input type="button" value="Connect to Bluetooth" onclick="app.connect()" style="font-size: inherit;" /><br />
+        <input type="button" value="alert" onclick="BluetoothSerialJs.postAlert()" style="font-size: inherit;" /><br />
     </div>
 </body>
 

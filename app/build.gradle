@@ -23,10 +23,15 @@ android {
         }
     }
 
+    packagingOptions {
+        exclude 'META-INF/kotlinx-serialization-runtime.kotlin_module'
+    }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':SharedCode')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
@@ -35,4 +40,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.webkit:webkit:1.1.0'
+    implementation("com.squareup.moshi:moshi-kotlin:1.9.2")
 }

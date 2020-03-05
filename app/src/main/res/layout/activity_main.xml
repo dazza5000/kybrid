@@ -49,15 +49,6 @@
             android:text="Native To JavaScrript"
             android:textAllCaps="false" />
 
-        <Button
-            android:id="@+id/connectBluetooth"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_weight="0.5"
-            android:gravity="center"
-            android:text="Connect to bluetooth"
-            android:textAllCaps="false" />
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

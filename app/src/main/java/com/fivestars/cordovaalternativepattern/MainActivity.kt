@@ -28,17 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         webViewConfig = WebViewConfig(webView)
         btnSendMessage.setOnClickListener {
-//            WebViewCompat.postWebMessage(webView, WebMessageCompat(txtSendMessage.text.toString()), Uri.EMPTY)
             BluetoothSerial.write("asdf".toByteArray())
-        }
-
-        connectBluetooth.setOnClickListener {
-            BluetoothSerial.connect(null, object: BluetoothSerial.ResultInterface {
-                @SuppressLint("RequiresFeature")
-                override fun sendResult(result: String) {
-                    WebViewCompat.postWebMessage(webView, WebMessageCompat("Connected to bluetooth"), Uri.EMPTY)
-                }
-            })
         }
     }
 }

@@ -1,2 +1,4 @@
-rootProject.name='Cordova Alternative Pattern'
+rootProject.name='CordovaAlternativePattern'
 include ':app'
+include ':SharedCode'
+include ':BluetoothSerialJs'
