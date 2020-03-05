@@ -1,8 +1,7 @@
 {
-  mode: 'production',
+  mode: 'development',
   resolve: {
     modules: [
-      '/Users/fivestars.user/source/fivestars/cordova-alternative-pattern/build/js/packages/CordovaAlternativePattern-SharedCode/kotlin-dce',
       'node_modules'
     ]
   },
@@ -20,14 +19,14 @@
   },
   entry: {
     main: [
-      '/Users/fivestars.user/source/fivestars/cordova-alternative-pattern/build/js/packages/CordovaAlternativePattern-SharedCode/kotlin-dce/CordovaAlternativePattern-SharedCode.js'
+      '/rom/source/fivestars/CordovaAlternativePattern/build/js/packages/CordovaAlternativePattern-SharedCode/kotlin/CordovaAlternativePattern-SharedCode.js'
     ]
   },
   output: {
-    path: '/Users/fivestars.user/source/fivestars/cordova-alternative-pattern/SharedCode/build/distributions',
+    path: '/rom/source/fivestars/CordovaAlternativePattern/SharedCode/build/distributions',
     filename: [Function: filename],
     library: 'SharedCode',
     libraryTarget: 'umd'
   },
-  devtool: 'source-map'
+  devtool: 'eval-source-map'
 }

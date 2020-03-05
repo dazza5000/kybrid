@@ -1,6 +1,9 @@
 package model
 
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+
 import com.fivestars.cordovaalternativepattern.model.Action
 
-data class JavascriptMessage(val action: Action, val data: Map<String, Any>?) {
-}
+@Serializable
+data class JavascriptMessage(val action: Action, val data: Map<String, String>?)

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BluetoothSerialJs">
+    <output-path>$PROJECT_DIR$/BluetoothSerialJs/build/libs</output-path>
+    <root id="archive" name="BluetoothSerialJs.jar">
+      <element id="module-output" name="BluetoothSerialJs_main" />
+    </root>
+  </artifact>
+</component>

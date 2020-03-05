@@ -1,5 +1,9 @@
 package com.fivestars.cordovaalternativepattern.model
 
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+
+@Serializable
 enum class Action {
     CONNECT,
     DISCONNECT,
