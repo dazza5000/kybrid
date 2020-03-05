@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
     }
 
     @SuppressLint("RequiresFeature")
@@ -28,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         webViewConfig = WebViewConfig(webView)
         btnSendMessage.setOnClickListener {
-            BluetoothSerial.write("asdf".toByteArray())
+            BluetoothSerial.write("asdf", null, null, webView)
         }
     }
 }

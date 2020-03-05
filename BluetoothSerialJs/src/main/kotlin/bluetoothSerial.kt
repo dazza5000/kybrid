@@ -1,45 +1,110 @@
 import com.fivestars.cordovaalternativepattern.KEY_MAC_ADDRESS
+import com.fivestars.cordovaalternativepattern.KEY_SEND_DATA
 import com.fivestars.cordovaalternativepattern.model.Action
-import model.JavascriptMessage
-import kotlinx.serialization.*
+import com.fivestars.cordovaalternativepattern.model.CallbackId
+import com.fivestars.cordovaalternativepattern.model.NativeDataMessage
 import kotlinx.serialization.json.*
+import model.JavascriptMessage
+import org.w3c.dom.MessageEvent
+import kotlin.browser.window
 
 object BluetoothSerial {
+    private val callbacks = mutableMapOf<CallbackId, () -> Unit>()
+    private val json = Json(JsonConfiguration.Stable)
+    private var onDataCallback: ((ByteArray) -> Unit)? = null
+
     @JsName("connect")
     fun connect(macAddress: String, success: () -> Unit, failure: () -> Unit) {
 
-        val message = JavascriptMessage(action = Action.CONNECT, data = mapOf(
+        callbacks[CallbackId.CONNECT_SUCCESS] = success
+        callbacks[CallbackId.CONNECT_FAILURE] = failure
+
+        window.addEventListener("message", {
+            val event = it as MessageEvent
+
+            val dataMessage = json.parse(NativeDataMessage.serializer(), it.data.toString())
+
+            dataMessage.callbackId.run {
+                callbacks[this]?.invoke()
+
+                callbacks.remove(CallbackId.CONNECT_SUCCESS)
+                callbacks.remove(CallbackId.CONNECT_FAILURE)
+            }
+
+        }, false)
+
+        val message = JavascriptMessage(Action.CONNECT, CallbackId.CONNECT_SUCCESS, CallbackId.CONNECT_FAILURE, mapOf(
             KEY_MAC_ADDRESS to macAddress))
 
-        val json = Json(JsonConfiguration.Stable)
-        // serializing objects
         val jsonData = json.stringify(JavascriptMessage.serializer(), message)
 
         outputPort.postMessage(jsonData)
     }
 
-    fun disconnect() {
-        outputPort.postMessage(JavascriptMessage(Action.DISCONNECT, null))
+    fun disconnect(success: () -> Unit, failure: () -> Unit) {
+        outputPort.postMessage(JavascriptMessage(Action.DISCONNECT, null, null, null))
     }
 
-    fun send(data: ByteArray, success: () -> Unit, failure: () -> Unit) { }
+    @ExperimentalStdlibApi
+    @JsName("send")
+    fun send(data: String, success: () -> Unit, failure: () -> Unit) {
+
+        callbacks[CallbackId.SEND_SUCCESS] = success
+        callbacks[CallbackId.SEND_FAILURE] = failure
+
+        window.addEventListener("message", {
+            val event = it as MessageEvent
+
+            val dataMessage = json.parse(NativeDataMessage.serializer(), it.data.toString())
+
+            dataMessage.callbackId.run {
+                callbacks[this]?.invoke()
+
+                callbacks.remove(CallbackId.SEND_SUCCESS)
+                callbacks.remove(CallbackId.SEND_FAILURE)
+            }
+
+        }, false)
+
+        val message = JavascriptMessage(Action.SEND, CallbackId.SEND_SUCCESS, CallbackId.SEND_FAILURE, mapOf(
+            KEY_SEND_DATA to data))
+
+        val jsonData = json.stringify(JavascriptMessage.serializer(), message)
+
+        outputPort.postMessage(jsonData)
+    }
 
     fun listen(success: () -> Unit, failure: () -> Unit) {}
 
     fun getAddress(success: () -> Unit, failure: () -> Unit) {}
 
-    fun registerOnDataCallback(success: () -> Unit) {
+    @JsName("registerOnDataCallback")
+    fun registerOnDataCallback(success: (byteArray: ByteArray) -> Unit) {
+        console.log("Registering the onDataCallback")
 
+        onDataCallback = success;
+
+        window.addEventListener("message", {
+
+            it as MessageEvent
+            val dataMessage = json.parse(NativeDataMessage.serializer(), it.data.toString())
+
+            console.log("dataMessage is: $dataMessage")
+
+            dataMessage.data?.run {
+                onDataCallback?.invoke(this)
+            }
+
+        }, false)
     }
 
-    fun registerOnConnectCallback(success: () -> Unit) {
-
+    @JsName("registerOnConnectCallback")
+    fun registerOnConnectCallback(onConnectCallback: () -> Unit) {
+        callbacks[CallbackId.ON_CONNECT_CALLBACK] = onConnectCallback
     }
 
-    fun registerOnCloseCallback(success: () -> Unit) {
-
+    @JsName("registerOnCloseCallback")
+    fun registerOnCloseCallback(onCloseCallback: () -> Unit) {
+        callbacks[CallbackId.ON_CLOSE_CALLBACK] = onCloseCallback
     }
 }
-
-@Serializable
-data class MessageEvent(val data: JavascriptMessage)
