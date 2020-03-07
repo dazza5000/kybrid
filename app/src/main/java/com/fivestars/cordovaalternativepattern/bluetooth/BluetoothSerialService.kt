@@ -14,10 +14,13 @@ import java.util.*
 object BluetoothSerialService {
 
     private const val LOG_TAG = "BluetoothSerialService"
+
     // Name for the SDP record when creating server socket
     private const val NAME_INSECURE = "PhoneGapBluetoothSerialService"
+
     // Unique UUID for this application
     private val MY_UUID_INSECURE = UUID.fromString("77718142-B389-4772-93BD-52BDBB2C0777")
+
     // Constants that indicate the current connection state
     const val STATE_NONE = 0 // we're doing nothing
     const val STATE_LISTEN = 1 // now listening for incoming connections
@@ -188,7 +191,10 @@ object BluetoothSerialService {
         private val mmServerSocket: BluetoothServerSocket?
         private val mSocketType: String
         override fun run() {
-            if (BuildConfig.DEBUG) Log.d(LOG_TAG, "Socket Type: " + mSocketType + "BEGIN mAcceptThread" + this)
+            if (BuildConfig.DEBUG) Log.d(
+                LOG_TAG,
+                "Socket Type: " + mSocketType + "BEGIN mAcceptThread" + this
+            )
             name = "AcceptThread$mSocketType"
             var socket: BluetoothSocket?
             // Listen to the server socket if we're not connected
@@ -235,7 +241,10 @@ object BluetoothSerialService {
             mSocketType = if (secure) "Secure" else "Insecure"
             // Create a new listening server socket
             try {
-                tmp = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(NAME_INSECURE, MY_UUID_INSECURE)
+                tmp = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(
+                    NAME_INSECURE,
+                    MY_UUID_INSECURE
+                )
             } catch (e: IOException) {
                 Log.e(LOG_TAG, "Socket Type: " + mSocketType + "listen() failed", e)
             }
@@ -265,7 +274,10 @@ object BluetoothSerialService {
 // See https://github.com/don/BluetoothSerial/issues/89
                 try {
                     Log.i(LOG_TAG, "Trying fallback...")
-                    mmSocket = mmDevice.javaClass.getMethod("createInsecureRfcommSocket", *arrayOf<Class<*>?>(Int::class.javaPrimitiveType)).invoke(mmDevice, 1) as BluetoothSocket
+                    mmSocket = mmDevice.javaClass.getMethod(
+                        "createInsecureRfcommSocket",
+                        *arrayOf<Class<*>?>(Int::class.javaPrimitiveType)
+                    ).invoke(mmDevice, 1) as BluetoothSocket
                     mmSocket!!.connect()
                     Log.i(LOG_TAG, "Connected")
                 } catch (e2: Exception) {
@@ -273,7 +285,11 @@ object BluetoothSerialService {
                     try {
                         mmSocket!!.close()
                     } catch (e3: IOException) {
-                        Log.e(LOG_TAG, "unable to close() $mSocketType socket during connection failure", e3)
+                        Log.e(
+                            LOG_TAG,
+                            "unable to close() $mSocketType socket during connection failure",
+                            e3
+                        )
                     }
                     connectionLost()
                     return
