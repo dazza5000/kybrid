@@ -17,7 +17,6 @@ class WebViewConfig(webView: WebView) {
         webView.settings.loadsImagesAutomatically = true
         webView.settings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
         webView.webViewClient = WebClient()
-        webView.webChromeClient = ChromeClient(webView)
         webView.loadUrl("file:///android_asset/index.html")
     }
 

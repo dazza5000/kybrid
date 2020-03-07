@@ -1,15 +1,8 @@
 package com.fivestars.cordovaalternativepattern
 
 import android.annotation.SuppressLint
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.webkit.WebView
-import android.widget.Button
-import android.widget.EditText
-import androidx.webkit.WebMessageCompat
-import androidx.webkit.WebViewCompat
+import androidx.appcompat.app.AppCompatActivity
 import com.fivestars.cordovaalternativepattern.bluetooth.BluetoothSerial
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -27,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         webViewConfig = WebViewConfig(webView)
         btnSendMessage.setOnClickListener {
-            BluetoothSerial.write("asdf", null, null, webView)
+            BluetoothSerial.write("Sending over bluetooth native", null, null)
         }
     }
 }

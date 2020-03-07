@@ -9,6 +9,10 @@ dependencies {
 
 kotlin {
     target {
-        browser {}
+        browser {
+            dceTask {
+                keep 'BluetoothSerialJs.com.fivestars.bluetooth.BluetoothSerial'
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.fivestars.cordovaalternativepattern.model
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Action {
@@ -12,5 +11,5 @@ enum class Action {
     GET_ADDRESS,
     REGISTER_DATA_CALLBACK,
     REGISTER_CONNECT_CALLBACK,
-    REGISTER_CLOSE_CALLBACK
+    REGISTER_DISCONNECT_CALLBACK
 }
