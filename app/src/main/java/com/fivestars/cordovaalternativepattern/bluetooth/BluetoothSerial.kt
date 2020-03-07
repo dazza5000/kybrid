@@ -208,7 +208,7 @@ object BluetoothSerial {
 
     private fun enableBluetoothIfNecessary() {
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if (!bluetoothAdapter.isEnabled) {
+        bluetoothAdapter?.isEnabled?.run {
             bluetoothAdapter.enable()
         }
     }

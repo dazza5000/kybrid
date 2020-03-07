@@ -27,7 +27,7 @@ object BluetoothSerialService {
     const val STATE_CONNECTING = 2 // now initiating an outgoing connection
     const val STATE_CONNECTED = 3 // now connected to a remote device
 
-    private val bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     private var insecureAcceptThread: AcceptThread? = null
     private var connectThread: ConnectThread? = null
     private var connectedThread: ConnectedThread? = null
@@ -241,7 +241,7 @@ object BluetoothSerialService {
             mSocketType = if (secure) "Secure" else "Insecure"
             // Create a new listening server socket
             try {
-                tmp = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(
+                tmp = bluetoothAdapter?.listenUsingInsecureRfcommWithServiceRecord(
                     NAME_INSECURE,
                     MY_UUID_INSECURE
                 )

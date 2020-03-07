@@ -9,5 +9,5 @@ data class JavascriptMessage(
     val action: Action,
     val successCallback: Callback?,
     val failureCallback: Callback?,
-    val data: Map<String, String>?
+    val data: Map<String, String>? = null
 )

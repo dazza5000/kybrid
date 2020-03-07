@@ -12,19 +12,26 @@ var app = {
             } // show the error if you fail
         );
         },
+                listen: function() {
+                        BluetoothSerialJs.com.fivestars.bluetooth.BluetoothSerial.listen(function(data) {
+                            console.log("This is the incoming data:" +data);
+                        }, function() {
+                                           console.log("Listen success");
+                                       });
+},
 
         registerCallbacks: function() {
                 BluetoothSerialJs.com.fivestars.bluetooth.BluetoothSerial.registerOnDataCallback(function(data) {
                     console.log("This is the incoming data:" +data);
                 });
 
-                BluetoothSerialJs.com.fivestars.bluetooth.BluetoothSerial.registerOnConnectCallback(function() {
-                    console.log("Connected");
-                });
-
-                BluetoothSerialJs.com.fivestars.bluetooth.BluetoothSerial.registerOnCloseCallback(function() {
-                    console.log("Disconnected");
-                });
+//                BluetoothSerialJs.com.fivestars.bluetooth.BluetoothSerial.registerOnConnectCallback(function() {
+//                    console.log("Connected");
+//                });
+//
+//                BluetoothSerialJs.com.fivestars.bluetooth.BluetoothSerial.registerOnCloseCallback(function() {
+//                    console.log("Disconnected");
+//                });
             },
 
                 send: function() {

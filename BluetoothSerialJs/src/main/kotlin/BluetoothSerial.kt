@@ -24,10 +24,16 @@ object BluetoothSerial {
     private val callbacks = mutableMapOf<Callback, () -> Unit>()
     private val json = Json(JsonConfiguration.Stable)
     private var onDataCallback: ((String) -> Unit)? = null
+    private var dataEventListener: EventListener? = null
 
     @JsName("listen")
     fun listen(success: () -> Unit, failure: () -> Unit) {
         registerCallbacks(Callback.LISTEN_SUCCESS, Callback.LISTEN_FAILURE, success, failure, true)
+        val message =
+            JavascriptMessage(
+                Action.LISTEN, Callback.LISTEN_SUCCESS, Callback.LISTEN_FAILURE)
+
+        sendMessageToNative(message)
     }
 
     @JsName("connect")
@@ -85,17 +91,24 @@ object BluetoothSerial {
 
     @JsName("registerOnDataCallback")
     fun registerOnDataCallback(success: (data: String) -> Unit) {
+        dataEventListener?.run {
+            window.removeEventListener("message", this, false)
+        }
+
         onDataCallback = success;
 
-        window.addEventListener("message", {
-            it as MessageEvent
-            val dataMessage = json.parse(NativeDataMessage.serializer(), it.data.toString())
+        dataEventListener = object : EventListener {
+            override fun handleEvent(event: Event) {
+                event as MessageEvent
+                val dataMessage = json.parse(NativeDataMessage.serializer(), event.data.toString())
 
-            dataMessage.data?.run {
-                onDataCallback?.invoke(this)
+                dataMessage.data?.run {
+                    onDataCallback?.invoke(this)
+                }
             }
+        }
 
-        }, false)
+        window.addEventListener("message", dataEventListener, false)
 
         val javascriptMessage =
             JavascriptMessage(
@@ -104,6 +117,7 @@ object BluetoothSerial {
                 null,
                 null
             )
+
         sendMessageToNative(javascriptMessage)
     }
 
@@ -188,8 +202,6 @@ object BluetoothSerial {
     fun configureChannel() {
         console.log("Configuring channel")
         window.addEventListener("message", {
-
-            console.log("Got event; $it")
 
             val event = it as MessageEvent
 
