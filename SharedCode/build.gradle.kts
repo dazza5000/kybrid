@@ -22,6 +22,7 @@ kotlin {
     sourceSets["androidMain"].dependencies {
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+        implementation("androidx.webkit:webkit:1.3.0")
     }
 
     sourceSets["jsMain"].dependencies {
@@ -38,7 +39,7 @@ android {
     compileSdkVersion(29)
     defaultConfig {
         minSdkVersion(23)
-        targetSdkVersion(25)
+        targetSdkVersion(26)
     }
     sourceSets {
         getByName("main") {
