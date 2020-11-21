@@ -1,4 +1,4 @@
-package com.whereisdarran.bluetooth.com.whereisdarran.kybrid.util
+package com.whereisdarran.kybrid.util
 
 @ExperimentalStdlibApi
 fun <T> createKotlinMapFromObject(jsObject: dynamic): Map<String, T> = buildMap {

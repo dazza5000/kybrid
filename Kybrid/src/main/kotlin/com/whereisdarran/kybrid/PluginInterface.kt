@@ -1,7 +1,7 @@
 package com.whereisdarran.kybrid
 
-import com.whereisdarran.instore.message.JavascriptMessage
-import com.whereisdarran.instore.message.NativeMessage
+import com.whereisdarran.kybrid.model.message.JavascriptMessage
+import com.whereisdarran.kybrid.model.message.NativeMessage
 import com.whereisdarran.kybrid.util.messaging.CallbackUtil
 
 import com.whereisdarran.kybrid.util.promise.rejectHelper

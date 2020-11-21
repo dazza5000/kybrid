@@ -1,7 +1,7 @@
 package com.whereisdarran.kybrid.util.messaging
 
-import com.whereisdarran.instore.message.NativeMessage
-import com.whereisdarran.instore.util.uuid
+import com.whereisdarran.kybrid.model.message.NativeMessage
+import com.whereisdarran.kybrid.util.uuid
 import kotlinx.serialization.json.Json
 
 class CallbackUtil<Action> {

@@ -1,4 +1,4 @@
-package com.whereisdarran.instore.util
+package com.whereisdarran.kybrid.util
 
 import kotlin.random.Random
 import kotlin.random.nextUBytes
