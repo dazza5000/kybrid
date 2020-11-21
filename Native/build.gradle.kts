@@ -1,39 +1,61 @@
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
-
     id("com.android.library")
 }
 
 kotlin {
     android()
 
+    ios()
+
     js {
         browser()
     }
 
-    sourceSets["commonMain"].dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+    val serializationVersion = "1.0.1"
+
+
+    sourceSets {
+
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+                implementation("androidx.webkit:webkit:1.3.0")
+            }
+        }
+
+        val iosMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+            }
+        }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+            }
+        }
     }
 
-    sourceSets["androidMain"].dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-        implementation("androidx.webkit:webkit:1.3.0")
-    }
-
-    sourceSets["jsMain"].dependencies {
-        implementation(kotlin("stdlib-js"))
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-    }
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdkVersion(Versions.compile_sdk)
     defaultConfig {
-        minSdkVersion(23)
-        targetSdkVersion(30)
+        minSdkVersion(Versions.min_sdk)
+        targetSdkVersion(Versions.target_sdk)
     }
     sourceSets {
         getByName("main") {
