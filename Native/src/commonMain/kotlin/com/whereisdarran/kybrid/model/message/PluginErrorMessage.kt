@@ -1,4 +1,4 @@
-package com.whereisdarran.instore.message
+package com.whereisdarran.kybrid.model.message
 
 import kotlinx.serialization.Serializable
 
