@@ -1,5 +1,5 @@
 object Versions {
-    val min_sdk = 21
+    val min_sdk = 23
     val target_sdk = 30
     val compile_sdk = 30
 

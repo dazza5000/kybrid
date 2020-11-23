@@ -9,3 +9,7 @@ expect class NativePlugin {
 interface IncomingMessageCallback {
     fun onIncomingMessageCallback(message: String)
 }
+
+expect class KybridWebView {
+    fun loadUrl(url: String)
+}
