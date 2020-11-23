@@ -1,0 +1,78 @@
+version: 2.1
+
+executors:
+  android:
+    docker:
+      - image: circleci/android:api-28
+    environment:
+      JVM_OPTS: -Xmx2048m
+      GRADLE_OPTS: -Xmx1536m -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.compiler.execution.strategy=in-process -Dkotlin.incremental=false
+    working_directory: ~/code
+
+jobs:
+  dependencies:
+    executor: android
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-{{ checksum "Plugins/build.gradle.kts" }}
+      - run:
+          name: Download Android dependencies
+          command: |
+            ./gradlew androidDependencies
+  ktLint:
+    executor: android
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-{{ checksum "Plugins/build.gradle.kts" }}
+      - run:
+          name: ktLint
+          command: |
+            ./gradlew ktlintCheck
+  buildMacPlatform:
+    macos:
+      xcode: 11.3.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-macos-{{ checksum "plugins/build.gradle.kts" }}
+      - run:
+          name: Build MultiPlatform
+          command: |
+            ./gradlew packForXcode
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: gradle-macos-{{ checksum "plugins/build.gradle.kts" }}
+      - store_artifacts:
+          path: plugins/build/xcode-frameworks/
+  buildMultiPlatform:
+    executor: android
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gradle-{{ checksum "Plugins/build.gradle.kts" }}
+      - run:
+          name: Build MultiPlatform
+          command: |
+            ./gradlew clean buildDebug
+      - store_artifacts:
+          path: Plugins/build/outputs/aar/
+          destination: aar/
+workflows:
+  version: 2
+  main:
+    jobs:
+      - dependencies
+      - ktLint:
+          requires:
+            - dependencies
+      - buildMultiPlatform:
+          requires:
+            - dependencies
+      - buildMacPlatform
