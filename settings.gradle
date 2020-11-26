@@ -1,3 +1,6 @@
+include ':androidsample'
+include ':androidsample'
+include ':androidsample'
 rootProject.name = 'kybrid'
 include ':Native'
 include ':Kybrid'
