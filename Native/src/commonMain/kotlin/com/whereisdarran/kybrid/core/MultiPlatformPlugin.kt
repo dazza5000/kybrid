@@ -1,12 +1,15 @@
-package com.whereisdarran.kybrid
+package com.whereisdarran.kybrid.core
 
+import com.whereisdarran.kybrid.IncomingMessageCallback
+import com.whereisdarran.kybrid.PlatformWebView
+import com.whereisdarran.kybrid.PluginConfig
 import com.whereisdarran.kybrid.model.message.JavascriptMessage
 import com.whereisdarran.kybrid.model.message.NativeMessage
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 
 abstract class MultiPlatformPlugin<ActionT>(private val config: PluginConfig) {
-    private var nativePlugin: NativePlugin? = null
+    private var platformWebView: PlatformWebView? = null
     protected val json = Json
 
     // Plugins must override this to expose their Action type's serializer, used
@@ -29,10 +32,10 @@ abstract class MultiPlatformPlugin<ActionT>(private val config: PluginConfig) {
 
     open fun cleanUp() {}
 
-    fun initialize(nativePlugin: NativePlugin) {
-        this.nativePlugin = nativePlugin
-        nativePlugin.initialize(config)
-        nativePlugin.setIncomingMessageCallback(incomingMessageCallback)
+    fun initialize(platformWebView: PlatformWebView) {
+        this.platformWebView = platformWebView
+        platformWebView.initialize(config)
+        platformWebView.setIncomingMessageCallback(incomingMessageCallback)
         postInitialize()
     }
 
@@ -53,7 +56,7 @@ abstract class MultiPlatformPlugin<ActionT>(private val config: PluginConfig) {
     fun sendMessage(message: NativeMessage<ActionT>) {
         val jsonData = serialize(message)
 
-        nativePlugin?.sendMessage(jsonData)
+        platformWebView?.sendMessage(jsonData)
     }
 
     /**

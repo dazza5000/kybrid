@@ -1,6 +1,6 @@
 package com.whereisdarran.kybrid
 
-expect class NativePlugin {
+expect class PlatformWebView {
     fun initialize(pluginConfig: PluginConfig)
     fun sendMessage(message: String)
     fun setIncomingMessageCallback(incomingMessageCallback: IncomingMessageCallback)

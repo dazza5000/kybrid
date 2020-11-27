@@ -6,7 +6,7 @@ import android.webkit.WebMessage
 import android.webkit.WebMessagePort
 import android.webkit.WebView
 
-actual class NativePlugin(private val webView: WebView) {
+actual class PlatformWebView(private val webView: WebView) {
 
     private lateinit var config: PluginConfig
     lateinit var nativePort: WebMessagePort
