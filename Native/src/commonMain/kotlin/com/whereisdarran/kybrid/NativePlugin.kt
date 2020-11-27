@@ -11,5 +11,5 @@ interface IncomingMessageCallback {
 }
 
 expect class KybridWebView {
-    fun loadUrl(url: String)
+    fun loadKybridUrl(url: String)
 }

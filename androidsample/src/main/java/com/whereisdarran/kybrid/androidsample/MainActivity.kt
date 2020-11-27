@@ -2,6 +2,8 @@ package com.whereisdarran.kybrid.androidsample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.WebView
+import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.whereisdarran.kybrid.KybridWebView
 
@@ -11,10 +13,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val kybridWebView = KybridWebView(this)
-
-        findViewById<ConstraintLayout>(R.id.root_constraint_layout).addView(kybridWebView)
-
-        kybridWebView.loadUrl("www.google.com")
+        findViewById<KybridWebView>(R.id.kybridWebview).loadKybridUrl("https://www.duckduckgo.com")
     }
 }
