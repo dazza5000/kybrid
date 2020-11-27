@@ -9,7 +9,7 @@ object PluginRegistry {
 
     fun initializePlugins() {
         registeredPlugins.forEach {
-            it.initialize(Native)
+
         }
     }
 
