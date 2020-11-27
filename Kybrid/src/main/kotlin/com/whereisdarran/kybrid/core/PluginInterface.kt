@@ -1,5 +1,6 @@
-package com.whereisdarran.kybrid
+package com.whereisdarran.kybrid.core
 
+import com.whereisdarran.kybrid.PluginConfig
 import com.whereisdarran.kybrid.model.message.JavascriptMessage
 import com.whereisdarran.kybrid.model.message.NativeMessage
 import com.whereisdarran.kybrid.util.messaging.CallbackUtil
@@ -13,21 +14,21 @@ import org.w3c.dom.MessageEvent
 import org.w3c.dom.MessagePort
 import org.w3c.dom.events.EventListener
 
-abstract class PluginInterface<ActionT>(
-    val callbackUtil: CallbackUtil<ActionT>,
+abstract class PluginInterface<T>(
+    val callbackUtil: CallbackUtil<T>,
     private val config: PluginConfig
 ) {
     protected val json = Json
 
     // Plugins must override this to expose their Action type's serializer, used
     // by serialize() and deserialize() below.
-    protected abstract val actionSerializer: KSerializer<ActionT>
+    protected abstract val actionSerializer: KSerializer<T>
 
     private var isInitialized = false
 
     private var port: MessagePort? = null
 
-    fun sendMessageToNative(javascriptMessage: JavascriptMessage<ActionT>) {
+    fun sendMessageToNative(javascriptMessage: JavascriptMessage<T>) {
         val json = serialize(javascriptMessage)
         port?.postMessage(json)
     }
@@ -94,11 +95,11 @@ abstract class PluginInterface<ActionT>(
      * @return Promise<T> that resolves with the value returned by the native layer
      */
     @ExperimentalUnsignedTypes
-    protected fun <T> makeCall(
-        action: ActionT,
+    protected fun <U> callNative(
+        action: T,
         data: String? = null,
-        returnSerializer: KSerializer<T>? = null
-    ): Promise<T> = Promise { resolve, reject ->
+        returnSerializer: KSerializer<U>? = null
+    ): Promise<U> = Promise { resolve, reject ->
         val resolver = if (returnSerializer === null) {
             resolve
         } else {
@@ -117,14 +118,14 @@ abstract class PluginInterface<ActionT>(
     /**
      * Serialize a JavascriptMessage to json, to send to the native plugin.
      */
-    fun serialize(msg: JavascriptMessage<ActionT>): String {
+    fun serialize(msg: JavascriptMessage<T>): String {
         return json.encodeToString(JavascriptMessage.serializer(actionSerializer), msg)
     }
 
     /**
      * Deserialize a message received from the native plugin.
      */
-    fun deserialize(jsonString: String): NativeMessage<ActionT> {
+    fun deserialize(jsonString: String): NativeMessage<T> {
         return json.decodeFromString(NativeMessage.serializer(actionSerializer), jsonString)
     }
 }

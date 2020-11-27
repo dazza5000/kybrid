@@ -1,6 +1,6 @@
-package com.whereisdarran.kybrid
+package com.whereisdarran.kybrid.core
 
-import com.whereisdarran.kybrid.core.MultiPlatformPlugin
+import com.whereisdarran.kybrid.PlatformWebView
 
 object PluginRegistry {
     private val registeredPlugins: MutableList<MultiPlatformPlugin<*>> = emptyList<MultiPlatformPlugin<*>>().toMutableList()
@@ -9,9 +9,9 @@ object PluginRegistry {
         registeredPlugins.add(multiPlatformPlugin)
     }
 
-    fun initializePlugins() {
+    fun initializePlugins(platformWebView: PlatformWebView) {
         registeredPlugins.forEach {
-
+            it.initialize(platformWebView)
         }
     }
 

@@ -10,6 +10,6 @@ interface IncomingMessageCallback {
     fun onIncomingMessageCallback(message: String)
 }
 
-expect class KybridWebView {
+expect class KybridView {
     fun loadKybridUrl(url: String)
 }

@@ -7,6 +7,10 @@ plugins {
 kotlin {
     android()
 
+    js{
+        browser()
+    }
+
     sourceSets {
         val androidMain by getting {
             dependencies {
@@ -27,6 +31,11 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+            }
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation(project(":Kybrid"))
             }
         }
     }
