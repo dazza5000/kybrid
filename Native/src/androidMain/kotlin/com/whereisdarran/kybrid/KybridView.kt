@@ -3,6 +3,7 @@ package com.whereisdarran.kybrid
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
+import android.webkit.ValueCallback
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
@@ -44,6 +45,7 @@ actual class KybridView @JvmOverloads constructor(
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             if (loadedUrl == url) {
+                view?.evaluateJavascript("DeviceInfoPlugin.com.whereisdarran.kybrid.plugin.deviceinfo.Registry", { })
                 com.whereisdarran.kybrid.core.PluginRegistry.initializePlugins(platformWebView)
             }
         }

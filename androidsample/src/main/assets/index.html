@@ -11,7 +11,13 @@
     <strong>This text is important!</strong>
     <script type = "text/javascript">
             <!--
-           DeviceInfoPlugin.com.whereisdarran.kybrid.plugin.deviceinfo.DeviceInfoInterface
+
+  DeviceInfoPlugin.com.whereisdarran.kybrid.plugin.deviceinfo.DeviceInfoInterface.getDeviceInfo().then(
+  function(value) { console.log("success: " + value) },
+  function(error) { console.log(error) }
+);
+
+
                     //-->
       </script>
 
