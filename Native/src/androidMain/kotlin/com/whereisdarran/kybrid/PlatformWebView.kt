@@ -1,6 +1,7 @@
 package com.whereisdarran.kybrid
 
 import android.net.Uri
+import android.os.Handler
 import android.util.Log
 import android.webkit.WebMessage
 import android.webkit.WebMessagePort

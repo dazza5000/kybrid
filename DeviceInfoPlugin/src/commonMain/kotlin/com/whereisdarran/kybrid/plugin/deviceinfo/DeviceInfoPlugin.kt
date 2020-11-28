@@ -25,7 +25,7 @@ enum class Action {
 @Serializable
 data class DeviceInfo(val model: String, val osVersion: String)
 
-object Config : com.whereisdarran.kybrid.PluginConfig {
-    override val PORT = "OkPayPlugin"
-    override val TAG = "OkPayPlugin"
+public object Config : com.whereisdarran.kybrid.PluginConfig {
+    override val PORT = "DeviceInfoPlugin"
+    override val TAG = "DeviceInfoPlugin"
 }

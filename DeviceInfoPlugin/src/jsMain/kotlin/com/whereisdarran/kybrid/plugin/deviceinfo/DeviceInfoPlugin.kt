@@ -8,10 +8,16 @@ import kotlinx.serialization.Serializable
 import kotlin.js.Promise
 
 @ExperimentalJsExport
-@JsExport
+@JsName("DeviceInfoInterface")
 object DeviceInfoInterface: PluginInterface<Action>(CallbackUtil(), Config) {
+
     override val actionSerializer: KSerializer<Action>
         get() = Action.serializer()
+
+    init {
+        console.log("${this.config.TAG}: Starting Initialization")
+        initialize().then { print(it) }
+    }
 
     @JsName("getDeviceInfo")
     fun getDeviceInfo(): Promise<DeviceInfo> = callNative(

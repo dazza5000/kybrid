@@ -2,6 +2,7 @@ package com.whereisdarran.kybrid
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
@@ -12,22 +13,39 @@ actual class KybridView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ): WebView(context, attrs, defStyleAttr)  {
 
-    val platformWebView: PlatformWebView
+    val platformWebView: PlatformWebView = PlatformWebView(this)
 
     init {
-        webViewClient = KybridBrowser()
-        platformWebView = PlatformWebView(this)
+        settings.apply {
+            setSupportZoom(true)
+            setGeolocationEnabled(true)
+            allowUniversalAccessFromFileURLs = true
+            allowFileAccessFromFileURLs = true
+            allowFileAccess = true
+            javaScriptEnabled = true
+            loadWithOverviewMode = true
+            useWideViewPort = true
+            loadsImagesAutomatically = true
+            mediaPlaybackRequiresUserGesture = false
+        }
     }
 
     actual fun loadKybridUrl(url: String) {
+        webViewClient = KybridBrowser(url, platformWebView)
         super.loadUrl(url)
-        com.whereisdarran.kybrid.core.PluginRegistry.initializePlugins(platformWebView)
     }
 
-    private class KybridBrowser : WebViewClient() {
+    private class KybridBrowser(val loadedUrl: String, val platformWebView: PlatformWebView) : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
             view.loadUrl(url)
             return true
+        }
+
+        override fun onPageFinished(view: WebView?, url: String?) {
+            super.onPageFinished(view, url)
+            if (loadedUrl == url) {
+                com.whereisdarran.kybrid.core.PluginRegistry.initializePlugins(platformWebView)
+            }
         }
     }
 }

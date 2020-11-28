@@ -16,7 +16,7 @@ import org.w3c.dom.events.EventListener
 
 abstract class PluginInterface<T>(
     val callbackUtil: CallbackUtil<T>,
-    private val config: PluginConfig
+    protected val config: PluginConfig
 ) {
     protected val json = Json
 
@@ -55,7 +55,7 @@ abstract class PluginInterface<T>(
         portReceived.then {
             window.removeEventListener("message", eventListener, false)
             postInitialize().then {
-                console.log("${this.config.TAG}: finished postInitialize")
+                console.log("${this.config.TAG}: Finished initialization")
                 resolve(Unit)
                 isInitialized = true
             }
