@@ -3,6 +3,7 @@ package com.whereisdarran.kybrid.plugin.deviceinfo
 import com.whereisdarran.kybrid.PluginConfig
 import com.whereisdarran.kybrid.core.js.PluginInterface
 import com.whereisdarran.kybrid.util.messaging.CallbackUtil
+import kotlinx.browser.window
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.js.Promise

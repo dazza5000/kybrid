@@ -1,11 +1,9 @@
 package com.whereisdarran.kybrid.androidsample
 
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 import com.whereisdarran.kybrid.KybridView
-import com.whereisdarran.kybrid.plugin.deviceinfo.Action
 import com.whereisdarran.kybrid.plugin.deviceinfo.DeviceInfoPlugin
 import com.whereisdarran.kybrid.plugin.deviceinfo.DeviceInfoProvider
 
