@@ -7,6 +7,7 @@ import android.webkit.WebView
 import com.whereisdarran.kybrid.KybridView
 import com.whereisdarran.kybrid.plugin.deviceinfo.Action
 import com.whereisdarran.kybrid.plugin.deviceinfo.DeviceInfoPlugin
+import com.whereisdarran.kybrid.plugin.deviceinfo.DeviceInfoProvider
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
-        val deviceInfoPlugin = DeviceInfoPlugin(Build.MODEL, Build.VERSION.SDK_INT.toString())
+        val deviceInfoPlugin = DeviceInfoPlugin(DeviceInfoProvider())
 
         com.whereisdarran.kybrid.core.PluginRegistry
             .registerPlugin(deviceInfoPlugin)
