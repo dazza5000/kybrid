@@ -1,6 +1,6 @@
 package com.whereisdarran.kybrid
 
 interface PluginConfig {
-    val PORT: String
-    val TAG: String
+    public val PORT: String
+    public val TAG: String
 }

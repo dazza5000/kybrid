@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html lang="en-gb">
-
+<html lang="en">
 <head>
+    <script src="js/DeviceInfoPlugin.js"></script>
     <title>WebView Callback Demo</title>
 </head>
-
 <body>
-    <div id="testRoot"/>
+<div id="testRoot" />
+<strong>This text is important!</strong>
+<script type="text/javascript">
+            <!--
 
+            DeviceInfoPlugin.com.whereisdarran.kybrid.plugin.deviceinfo.DeviceInfoInterface.getDeviceInfo().then(
+            function(value) { console.log("success: " + value) },
+            function(error) { console.log(error) }
+            );
+
+
+                    //-->
+        </script>
 </body>
-
 </html>

@@ -1,6 +1,6 @@
 package com.whereisdarran.kybrid
 
-actual class NativePlugin {
+actual class PlatformWebView {
     actual fun initialize(pluginConfig: PluginConfig) {
         throw NotImplementedError()
     }

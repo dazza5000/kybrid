@@ -10,7 +10,7 @@ import platform.WebKit.WKWebView
 import platform.WebKit.WKWebViewConfiguration
 import platform.darwin.NSObject
 
-actual class NativePlugin(private val wkWebView: WKWebView) {
+actual class PlatformWebView(private val wkWebView: WKWebView) {
     private var incomingMessageCallback: IncomingMessageCallback? = null
 
     actual fun initialize(pluginConfig: PluginConfig) {

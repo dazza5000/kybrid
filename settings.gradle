@@ -2,4 +2,5 @@ rootProject.name = 'kybrid'
 include ':androidsample'
 include ':Native'
 include ':Kybrid'
+include ':DeviceInfoPlugin'
 
