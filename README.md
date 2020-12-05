@@ -26,3 +26,4 @@ This is a sample plugin that provides access to native Device Information
 
 This is a sample android implementation of the kybrid framework that utilizes the `DeviceInfoPlugin`
 
+# How to Integrate Kybrid
