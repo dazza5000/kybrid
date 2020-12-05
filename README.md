@@ -1,4 +1,4 @@
-Kybrid is an attempt at creating a Hybrid Framework utilizing Kotlin Multiplatform
+# Kybrid is a Hybrid Framework utilizing Kotlin Multiplatform
 
 The goals are:
 
@@ -8,16 +8,21 @@ Make framework adoption dirt simple
 
 Reduce the amount of time writing bridge code
 
-The components are:
+# Kybrid Architecture
 
-Native: This provides the core native plugin components and 
-setting up the bridge between native and javascript
+## Native
 
-Kybrid: This provides the core javascript components 
+This provides the core native plugin components and sets up the bridge between native and javascript
 
-DeviceInfoPlugin:
+## Kybrid
+
+This provides the core javascript components 
+
+## DeviceInfoPlugin
 
 This is a sample plugin that provides access to Native Device Information
 
-androidsample: This is a sample android implementation of the kybrid framework that utilizes the DeviceInfoPlugin
+## androidsample
+
+This is a sample android implementation of the kybrid framework that utilizes the DeviceInfoPlugin
 
