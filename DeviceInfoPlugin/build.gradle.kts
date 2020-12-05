@@ -36,6 +36,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(project(":Kybrid"))
+                implementation("org.jetbrains.kotlinx:kotlinx-html:0.7.2")
             }
         }
     }

@@ -43,6 +43,11 @@ abstract class PluginInterface<T>(
      */
     @JsName("initialize")
     fun initialize(): Promise<Unit> = Promise { resolve, _ ->
+        if (window.asDynamic()["Kybrid"] == null) {
+            window.asDynamic()["Kybrid"] = {}
+        }
+        window.asDynamic()["Kybrid"][config.TAG] = this
+
         var eventListener: EventListener? = null
 
         val portReceived = Promise<Unit> { receivedResolve, _ ->
