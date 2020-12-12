@@ -1,6 +1,9 @@
 package com.whereisdarran.kybrid
 
+import com.whereisdarran.kybrid.core.PluginRegistry
 import platform.Foundation.setValue
+import platform.Foundation.NSURL
+import platform.Foundation.NSURLRequest
 import platform.UIKit.UIScreen
 import platform.WebKit.WKScriptMessage
 import platform.WebKit.WKUserContentController
@@ -10,7 +13,7 @@ import platform.WebKit.WKWebView
 import platform.WebKit.WKWebViewConfiguration
 import platform.darwin.NSObject
 
-actual class KybridWebView {
+actual class KybridView {
 
     private lateinit var wkWebView: WKWebView
     private var incomingMessageCallback: IncomingMessageCallback? = null
@@ -40,11 +43,11 @@ actual class KybridWebView {
         this.wkWebView = WKWebView(frame = UIScreen.mainScreen.bounds, wkWebViewConfiguration)
     }
 
-    actual fun loadUrl(url: String) {
-        val myURL = URL(string = url)
-        val myRequest = URLRequest(url = myURL)
-        wkWebView.load(myRequest)
-        PluginRegistry.initializePlugins()
+    actual fun loadKybridUrl(url: String) {
+        val myURL = NSURL(string = url)
+        val myRequest = NSURLRequest(myURL)
+        wkWebView.loadRequest(myRequest)
+//        PluginRegistry.initializePlugins(this)
     }
 
 }
